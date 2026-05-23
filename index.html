@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Consulta de Notas — ETN-1016</title>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --bg: #0d0f14; --surface: #151820; --border: #242736;
+      --accent: #5b8dee; --accent2: #7dd3a8; --muted: #4a4f6a;
+      --text: #e8eaf2; --text2: #9096b8; --danger: #e05c6e;
+      --warn: #f0b429; --radius: 14px;
+    }
+    body {
+      background: var(--bg); color: var(--text);
+      font-family: 'DM Sans', sans-serif;
+      min-height: 100vh; display: flex; flex-direction: column;
+      align-items: center; justify-content: center; padding: 2rem 1rem;
+    }
+    body::before {
+      content: ''; position: fixed; inset: 0;
+      background-image: linear-gradient(var(--border) 1px, transparent 1px),
+        linear-gradient(90deg, var(--border) 1px, transparent 1px);
+      background-size: 48px 48px; opacity: 0.3; pointer-events: none; z-index: 0;
+    }
+    .wrapper { position: relative; z-index: 1; width: 100%; max-width: 460px; }
+    .header { text-align: center; margin-bottom: 2rem; }
+    .tag {
+      display: inline-block; font-family: 'DM Mono', monospace;
+      font-size: 10px; letter-spacing: 0.1em; color: var(--accent);
+      border: 1px solid var(--accent); padding: 4px 12px;
+      border-radius: 4px; margin-bottom: 0.9rem; text-transform: uppercase; line-height: 1.5;
+    }
+    .header h1 { font-size: 1.6rem; font-weight: 600; }
+    .header p { margin-top: 0.4rem; font-size: 0.875rem; color: var(--text2); }
+    .card {
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: var(--radius); padding: 1.75rem;
+      animation: fadeUp 0.3s ease both;
+    }
+    @keyframes fadeUp { from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)} }
+    .label {
+      display: block; font-size: 0.72rem; font-weight: 500;
+      letter-spacing: 0.08em; text-transform: uppercase; color: var(--text2);
+      margin-bottom: 0.5rem; font-family: 'DM Mono', monospace;
+    }
+    .input-wrap { display: flex; gap: 8px; }
+    input[type="text"] {
+      flex: 1; background: var(--bg); border: 1px solid var(--border);
+      border-radius: 8px; color: var(--text); font-family: 'DM Mono', monospace;
+      font-size: 1.05rem; padding: 0.7rem 1rem; outline: none;
+      transition: border-color 0.2s; letter-spacing: 0.05em;
+    }
+    input[type="text"]:focus { border-color: var(--accent); }
+    input[type="text"]::placeholder { color: var(--muted); }
+    .btn {
+      background: var(--accent); color: #fff; border: none; border-radius: 8px;
+      padding: 0.7rem 1.3rem; font-family: 'DM Sans', sans-serif;
+      font-size: 0.88rem; font-weight: 600; cursor: pointer;
+      transition: opacity 0.2s, transform 0.1s; white-space: nowrap;
+    }
+    .btn:hover { opacity: 0.85; } .btn:active { transform: scale(0.97); }
+    .btn-ghost {
+      background: transparent; border: 1px solid var(--border);
+      color: var(--text2); font-size: 0.82rem; padding: 0.5rem 1rem;
+    }
+    .btn-ghost:hover { border-color: var(--text2); color: var(--text); }
+    .error { margin-top: 0.7rem; font-size: 0.82rem; color: var(--danger); display: none; font-family: 'DM Mono', monospace; }
+    #pantalla-login{display:block} #pantalla-resultado{display:none}
+    .result-header{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:1.25rem;gap:1rem}
+    .result-name{font-size:1.05rem;font-weight:600;line-height:1.3}
+    .result-meta{font-family:'DM Mono',monospace;font-size:0.72rem;color:var(--text2);margin-top:4px;line-height:1.6}
+    .avatar{width:46px;height:46px;border-radius:50%;background:linear-gradient(135deg,var(--accent),var(--accent2));display:flex;align-items:center;justify-content:center;font-weight:600;font-size:.95rem;color:#fff;flex-shrink:0}
+    .divider{border:none;border-top:1px solid var(--border);margin:1.1rem 0}
+    .stats-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:1.1rem}
+    .stat-box{background:var(--bg);border:1px solid var(--border);border-radius:10px;padding:.85rem .6rem;text-align:center}
+    .stat-label{font-size:.6rem;text-transform:uppercase;letter-spacing:.07em;color:var(--text2);font-family:'DM Mono',monospace;margin-bottom:.4rem;line-height:1.35;min-height:2.1em;display:flex;align-items:center;justify-content:center}
+    .stat-value{font-size:1.45rem;font-weight:600;font-family:'DM Mono',monospace;line-height:1}
+    .stat-sub{font-size:.62rem;color:var(--text2);margin-top:3px;font-family:'DM Mono',monospace}
+    .c-green{color:var(--accent2)} .c-blue{color:var(--accent)} .c-warn{color:var(--warn)} .c-red{color:var(--danger)} .c-muted{color:var(--muted)}
+    .section-title{font-size:.68rem;text-transform:uppercase;letter-spacing:.1em;color:var(--text2);font-family:'DM Mono',monospace;margin-bottom:.65rem}
+    .practicas-row{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:1.1rem}
+    .practica-box{background:var(--bg);border:1px solid var(--border);border-radius:8px;padding:.75rem;text-align:center}
+    .practica-label{font-size:.68rem;text-transform:uppercase;letter-spacing:.1em;color:var(--text2);font-family:'DM Mono',monospace}
+    .practica-val{font-size:1.1rem;font-weight:600;font-family:'DM Mono',monospace;color:var(--text);margin-top:4px}
+    .practica-val.pendiente{color:var(--muted);font-size:.75rem;font-weight:400}
+    .clases-grid{display:flex;flex-wrap:wrap;gap:5px;margin-bottom:1.1rem}
+    .clase-dot{width:34px;height:34px;border-radius:6px;display:flex;align-items:center;justify-content:center;font-family:'DM Mono',monospace;font-size:.68rem;font-weight:500;border:1px solid transparent}
+    .presente{background:rgba(125,211,168,.13);border-color:rgba(125,211,168,.3);color:var(--accent2)}
+    .ausente{background:rgba(224,92,110,.1);border-color:rgba(224,92,110,.25);color:var(--danger)}
+    .sin-dato{background:var(--bg);border-color:var(--border);color:var(--muted)}
+    .back-row{margin-top:1.25rem;text-align:center}
+  </style>
+</head>
+<body>
+<div class="wrapper">
+  <div class="header">
+    <div class="tag">AUXILIATURA ETN-1016 TEORIA DE TELECOMUNICACIONES II</div>
+    <h1>Consulta de Notas</h1>
+    <p>Ingresa tu Registro Universitario para ver tu progreso</p>
+  </div>
+
+  <div class="card" id="pantalla-login">
+    <label class="label" for="ru">Registro Universitario (R.U.)</label>
+    <div class="input-wrap">
+      <input type="text" id="ru" placeholder="Ej: 12345678" autocomplete="off"
+        onkeydown="if(event.key==='Enter') buscar()"/>
+      <button class="btn" onclick="buscar()">Consultar</button>
+    </div>
+    <div class="error" id="error"></div>
+  </div>
+
+  <div class="card" id="pantalla-resultado">
+    <div class="result-header">
+      <div>
+        <div class="result-name" id="res-nombre"></div>
+        <div class="result-meta" id="res-meta"></div>
+      </div>
+      <div class="avatar" id="res-avatar"></div>
+    </div>
+    <hr class="divider">
+    <div class="stats-grid">
+      <div class="stat-box">
+        <div class="stat-label">Nota<br>práctica</div>
+        <div class="stat-value" id="res-nota-prac">—</div>
+        <div class="stat-sub">/ 100 pts</div>
+      </div>
+      <div class="stat-box">
+        <div class="stat-label">Nota práctica<br>en clase</div>
+        <div class="stat-value" id="res-nota-asist">—</div>
+        <div class="stat-sub">/ 5 pts</div>
+      </div>
+      <div class="stat-box">
+        <div class="stat-label">Nota<br>asistencia</div>
+        <div class="stat-value" id="res-nota-asist2">—</div>
+        <div class="stat-sub">/ 5 pts</div>
+      </div>
+    </div>
+    <hr class="divider">
+    <div class="section-title">Detalle de prácticas</div>
+    <div class="practicas-row">
+      <div class="practica-box"><div class="practica-label">P1</div><div class="practica-val" id="res-p1"></div></div>
+      <div class="practica-box"><div class="practica-label">P2</div><div class="practica-val" id="res-p2"></div></div>
+      <div class="practica-box"><div class="practica-label">P3</div><div class="practica-val" id="res-p3"></div></div>
+    </div>
+    <hr class="divider">
+    <div class="section-title">Asistencia por clase</div>
+    <div class="clases-grid" id="res-grid"></div>
+    <div class="back-row">
+      <button class="btn btn-ghost" onclick="volver()">← Volver</button>
+    </div>
+  </div>
+</div>
+
+<script>
+const DATOS = {"1838856": {"nombres": "Luis", "apPat": "Acarapi", "apMat": "Plata", "clases": ["1", "1", "1", "1", "1", "1", "1", "1", null, null, null], "notaAsist": "5", "p1": null, "p2": null, "p3": null, "notaPractica": null}, "1766694": {"nombres": "Alvaro", "apPat": "Blanco", "apMat": "Uria", "clases": ["0", "0", "0", "0", "0", "0", "0", "1", null, null, null], "notaAsist": "0.6", "p1": null, "p2": null, "p3": null, "notaPractica": null}, "1700658": {"nombres": "Fabiola", "apPat": "Castro", "apMat": "Cardozo", "clases": ["0", "1", "1", "0", "1", "1", "0", "1", null, null, null], "notaAsist": "3.1", "p1": null, "p2": null, "p3": null, "notaPractica": null}, "1734815": {"nombres": "Alvaro", "apPat": "Chinahuanca", "apMat": "Pacosillo", "clases": ["0", "0", "0", "0", "0", "0", "0", "1", null, null, null], "notaAsist": "0.6", "p1": null, "p2": null, "p3": null, "notaPractica": null}, "1864836": {"nombres": "Joshua", "apPat": "Chipana", "apMat": "Oporto", "clases": ["1", "1", "0", "0", "0", "1", "1", "1", null, null, null], "notaAsist": "3.1", "p1": null, "p2": null, "p3": null, "notaPractica": null}, "1838872": {"nombres": "Cristofer", "apPat": "Huanto", "apMat": "Pinto", "clases": ["1", "0", "1", "1", "1", "1", "0", "1", null, null, null], "notaAsist": "3.8", "p1": null, "p2": null, "p3": null, "notaPractica": null}, "1825264": {"nombres": "Cristian", "apPat": "Ichuta", "apMat": "Aguirre", "clases": ["1", "1", "1", "1", "1", "1", "1", "1", null, null, null], "notaAsist": "5", "p1": null, "p2": null, "p3": null, "notaPractica": null}, "1838718": {"nombres": "Jesus", "apPat": "Larrazabal", "apMat": "Salas", "clases": ["1", "1", "1", "1", "1", "1", "0", "1", null, null, null], "notaAsist": "4.4", "p1": null, "p2": null, "p3": null, "notaPractica": null}, "1780394": {"nombres": "Willy", "apPat": "Mamani", "apMat": "Apaza", "clases": ["0", "0", "0", "0", "0", "0", "0", "1", null, null, null], "notaAsist": "0.6", "p1": null, "p2": null, "p3": null, "notaPractica": null}, "1806450": {"nombres": "Itamar", "apPat": "Nina", "apMat": "Mamani", "clases": ["0", "1", "1", "1", "1", "1", "0", "0", null, null, null], "notaAsist": "3.1", "p1": null, "p2": null, "p3": null, "notaPractica": null}, "1848945": {"nombres": "Joel", "apPat": "Pachaguaya", "apMat": "Choque", "clases": ["1", "1", "1", "1", "1", "1", "1", "1", null, null, null], "notaAsist": "5", "p1": null, "p2": null, "p3": null, "notaPractica": null}, "1806458": {"nombres": "Jose", "apPat": "Quispe", "apMat": "Quispe", "clases": ["1", "1", "0", "0", "1", "1", "1", "1", null, null, null], "notaAsist": "3.8", "p1": null, "p2": null, "p3": null, "notaPractica": null}, "1760051": {"nombres": "Kevin", "apPat": "Rodriguez", "apMat": "Lecoña", "clases": ["0", "0", "0", "0", "0", "0", "0", "0", null, null, null], "notaAsist": "0", "p1": null, "p2": null, "p3": null, "notaPractica": null}, "1788788": {"nombres": "Jose", "apPat": "Vilela", "apMat": "Condori", "clases": ["0", "0", "0", "0", "1", "0", "0", "0", null, null, null], "notaAsist": "0.6", "p1": null, "p2": null, "p3": null, "notaPractica": null}, "1838887": {"nombres": "Kevin", "apPat": "Quispe", "apMat": "Condori", "clases": ["1", "1", "0", "0", "1", "1", "1", "0", null, null, null], "notaAsist": "3.1", "p1": null, "p2": null, "p3": null, "notaPractica": null}};
+
+function colorNota(v, max100) {
+  const n = parseFloat(v);
+  if (isNaN(n)) return 'c-muted';
+  if (max100) return n >= 75 ? 'c-green' : n >= 51 ? 'c-warn' : 'c-red';
+  return n >= 4 ? 'c-green' : n >= 2.5 ? 'c-warn' : 'c-red';
+}
+
+function buscar() {
+  const ru = document.getElementById('ru').value.trim();
+  const errDiv = document.getElementById('error');
+  errDiv.style.display = 'none';
+  if (!ru) { errDiv.textContent = 'Ingresa tu Registro Universitario.'; errDiv.style.display = 'block'; return; }
+  const est = DATOS[ru];
+  if (!est) {
+    errDiv.textContent = 'R.U. "' + ru + '" no encontrado. Verifica tu número o consulta al auxiliar.';
+    errDiv.style.display = 'block'; return;
+  }
+  mostrar(ru, est);
+}
+
+function mostrar(ru, est) {
+  document.getElementById('res-nombre').textContent = est.nombres + ' ' + est.apPat + ' ' + est.apMat;
+  document.getElementById('res-meta').innerHTML = 'R.U.: ' + ru;
+  document.getElementById('res-avatar').textContent = (est.nombres[0] + est.apPat[0]).toUpperCase();
+
+  const set = (id, val, max100) => {
+    const el = document.getElementById(id);
+    el.textContent = val || '—';
+    el.className = 'stat-value ' + (val ? colorNota(val, max100) : 'c-muted');
+  };
+  set('res-nota-prac',   est.notaPractica, true);
+  set('res-nota-asist',  est.notaAsist, false);
+  set('res-nota-asist2', est.notaAsist, false);
+
+  ['p1','p2','p3'].forEach(p => {
+    const el = document.getElementById('res-' + p);
+    if (!est[p]) { el.textContent = 'Pendiente'; el.className = 'practica-val pendiente'; }
+    else { el.textContent = est[p]; el.className = 'practica-val ' + colorNota(est[p], true); }
+  });
+
+  const grid = document.getElementById('res-grid');
+  grid.innerHTML = '';
+  est.clases.forEach((v, i) => {
+    const d = document.createElement('div');
+    d.className = 'clase-dot ' + (v==='1'?'presente':v==='0'?'ausente':'sin-dato');
+    d.title = 'Clase '+(i+1)+': '+(v==='1'?'Presente':v==='0'?'Ausente':'Sin dato');
+    d.textContent = i + 1;
+    grid.appendChild(d);
+  });
+
+  document.getElementById('pantalla-login').style.display = 'none';
+  const res = document.getElementById('pantalla-resultado');
+  res.style.display = 'block';
+  res.style.animation = 'none'; res.offsetHeight;
+  res.style.animation = 'fadeUp 0.3s ease both';
+}
+
+function volver() {
+  document.getElementById('pantalla-resultado').style.display = 'none';
+  const login = document.getElementById('pantalla-login');
+  login.style.display = 'block';
+  login.style.animation = 'none'; login.offsetHeight;
+  login.style.animation = 'fadeUp 0.3s ease both';
+  document.getElementById('ru').value = '';
+  document.getElementById('error').style.display = 'none';
+}
+</script>
+</body>
+</html>
