@@ -187,7 +187,7 @@ function mostrar(ru, est) {
     el.textContent = val || '—';
     el.className = 'stat-value ' + (val ? colorNota(val, max100) : 'c-muted');
   };
-  set('res-nota-prac',   est.notaPractica, true);
+  set('res-nota-prac',   est.notaPractica, false);
   set('res-nota-asist',  est.notaAsist, false);
   set('res-nota-asist2', est.notaAsist, false);
 
