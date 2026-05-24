@@ -103,11 +103,16 @@
   </div>
 
   <div class="card" id="pantalla-login">
-    <label class="label" for="ru">Registro Universitario (R.U.)</label>
-    <div class="input-wrap">
-      <input type="text" id="ru" placeholder="Ej: 12345678" autocomplete="off"
-        onkeydown="if(event.key==='Enter') buscar()"/>
-      <button class="btn" onclick="buscar()">Consultar</button>
+    <div id="estado-carga" style="text-align:center;padding:.5rem 0 .75rem;color:var(--text2);font-family:'DM Mono',monospace;font-size:.82rem;">
+      Cargando datos…
+    </div>
+    <div id="form-buscar" style="display:none">
+      <label class="label" for="ru">Registro Universitario (R.U.)</label>
+      <div class="input-wrap">
+        <input type="text" id="ru" placeholder="Ej: 12345678" autocomplete="off"
+          onkeydown="if(event.key==='Enter') buscar()"/>
+        <button class="btn" onclick="buscar()">Consultar</button>
+      </div>
     </div>
     <div class="error" id="error"></div>
   </div>
@@ -155,7 +160,95 @@
 </div>
 
 <script>
-const DATOS = {"1838856": {"nombres": "Luis", "apPat": "Acarapi", "apMat": "Plata", "clases": ["1", "1", "1", "1", "1", "1", "1", "1", null, null, null], "notaAsist": "5", "p1": null, "p2": null, "p3": null, "notaPractica": null}, "1825290": {"nombres": "Kelly", "apPat": "Ayllon", "apMat": "Valencia", "clases": ["1", "1", "0", "0", "1", "0", "1", "0", null, null, null], "notaAsist": "2.5", "p1": null, "p2": null, "p3": null, "notaPractica": null}, "1766694": {"nombres": "Alvaro", "apPat": "Blanco", "apMat": "Uria", "clases": ["0", "0", "0", "0", "0", "0", "0", "1", null, null, null], "notaAsist": "0.6", "p1": null, "p2": null, "p3": null, "notaPractica": null}, "1700658": {"nombres": "Fabiola", "apPat": "Castro", "apMat": "Cardozo", "clases": ["1", "1", "1", "1", "1", "1", "0", "1", null, null, null], "notaAsist": "4.4", "p1": null, "p2": null, "p3": null, "notaPractica": null}, "1734815": {"nombres": "Alvaro", "apPat": "Chinahuanca", "apMat": "Pacosillo", "clases": ["0", "0", "0", "0", "0", "0", "0", "1", null, null, null], "notaAsist": "0.6", "p1": null, "p2": null, "p3": null, "notaPractica": null}, "1864836": {"nombres": "Joshua", "apPat": "Chipana", "apMat": "Oporto", "clases": ["1", "1", "0", "0", "0", "1", "1", "1", null, null, null], "notaAsist": "3.1", "p1": null, "p2": null, "p3": null, "notaPractica": null}, "1848883": {"nombres": "Cristian", "apPat": "Chuquimia", "apMat": "Blanco", "clases": ["1", "0", "0", "0", "0", "0", "0", "0", null, null, null], "notaAsist": "0.6", "p1": null, "p2": null, "p3": null, "notaPractica": null}, "1838872": {"nombres": "Cristofer", "apPat": "Huanto", "apMat": "Pinto", "clases": ["1", "0", "1", "1", "1", "1", "0", "1", null, null, null], "notaAsist": "3.8", "p1": null, "p2": null, "p3": null, "notaPractica": null}, "1825264": {"nombres": "Cristian", "apPat": "Ichuta", "apMat": "Aguirre", "clases": ["1", "1", "1", "1", "1", "1", "1", "1", null, null, null], "notaAsist": "5", "p1": null, "p2": null, "p3": null, "notaPractica": null}, "1838718": {"nombres": "Jesus", "apPat": "Larrazabal", "apMat": "Salas", "clases": ["1", "1", "1", "1", "1", "1", "1", "1", null, null, null], "notaAsist": "5", "p1": null, "p2": null, "p3": null, "notaPractica": null}, "1825268": {"nombres": "Wara", "apPat": "Limachi", "apMat": "Viscvarra", "clases": ["1", "1", "1", "1", "0", "0", "0", "1", null, null, null], "notaAsist": "3.1", "p1": null, "p2": null, "p3": null, "notaPractica": null}, "1780394": {"nombres": "Willy", "apPat": "Mamani", "apMat": "Apaza", "clases": ["0", "0", "0", "0", "0", "0", "0", "1", null, null, null], "notaAsist": "0.6", "p1": null, "p2": null, "p3": null, "notaPractica": null}, "1806450": {"nombres": "Itamar", "apPat": "Nina", "apMat": "Mamani", "clases": ["0", "1", "1", "1", "1", "1", "0", "0", null, null, null], "notaAsist": "3.1", "p1": null, "p2": null, "p3": null, "notaPractica": null}, "1848945": {"nombres": "Joel", "apPat": "Pachaguaya", "apMat": "Choque", "clases": ["1", "1", "1", "1", "1", "1", "1", "1", null, null, null], "notaAsist": "5", "p1": null, "p2": null, "p3": null, "notaPractica": null}, "1806458": {"nombres": "Jose", "apPat": "Quispe", "apMat": "Quispe", "clases": ["1", "1", "0", "0", "1", "1", "1", "1", null, null, null], "notaAsist": "3.8", "p1": null, "p2": null, "p3": null, "notaPractica": null}, "1760051": {"nombres": "Kevin", "apPat": "Rodriguez", "apMat": "Lecoña", "clases": ["0", "0", "0", "0", "0", "0", "0", "0", null, null, null], "notaAsist": "0", "p1": null, "p2": null, "p3": null, "notaPractica": null}, "1848931": {"nombres": "Mauricio", "apPat": "Tarquino", "apMat": "Salazar", "clases": ["0", "0", "0", "0", "0", "0", "0", "0", null, null, null], "notaAsist": "0", "p1": null, "p2": null, "p3": null, "notaPractica": null}, "1714471": {"nombres": "Delfor", "apPat": "Torrez", "apMat": "Blanco", "clases": ["0", "0", "0", "0", "1", "1", "0", "1", null, null, null], "notaAsist": "1.9", "p1": null, "p2": null, "p3": null, "notaPractica": null}, "1788788": {"nombres": "Jose", "apPat": "Vilela", "apMat": "Condori", "clases": ["0", "0", "0", "0", "1", "0", "0", "0", null, null, null], "notaAsist": "0.6", "p1": null, "p2": null, "p3": null, "notaPractica": null}, "1838887": {"nombres": "Kevin", "apPat": "Quispe", "apMat": "Condori", "clases": ["1", "1", "0", "1", "1", "1", "1", "1", null, null, null], "notaAsist": "4.4", "p1": null, "p2": null, "p3": null, "notaPractica": null}};
+const CSV_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vQ-So2lNAqXymattgnH5RyDjyTA3-cm5k--3rMXSAL4xEXoeQ6-xf3jQMCAGd0qWqLOdMQT6g32haZ-/pub?gid=598646431&single=true&output=csv';
+let DATOS = null;
+
+function parseCSVRow(line) {
+  const cols = [];
+  let cur = '', inQ = false;
+  for (let i = 0; i < line.length; i++) {
+    if (line[i] === '"') { inQ = !inQ; }
+    else if (line[i] === ',' && !inQ) { cols.push(cur); cur = ''; }
+    else { cur += line[i]; }
+  }
+  cols.push(cur);
+  return cols.map(c => c.trim());
+}
+
+function parseClase(v) {
+  return v === '1' ? '1' : v === '0' ? '0' : null;
+}
+
+function calcNotaAsist(clases) {
+  const reg = clases.filter(c => c !== null);
+  if (!reg.length) return '0';
+  const pres = reg.filter(c => c === '1').length;
+  const n = Math.round(pres / reg.length * 5 * 10) / 10;
+  return n === Math.floor(n) ? String(Math.floor(n)) : String(n);
+}
+
+function calcNotaPractica(p1, p2, p3) {
+  const vals = [p1, p2, p3].filter(v => v).map(Number);
+  if (!vals.length) return null;
+  const avg = Math.round(vals.reduce((a, b) => a + b, 0) / vals.length / 100 * 5 * 100) / 100;
+  return String(avg);
+}
+
+function parsearCSV(texto) {
+  const lineas = texto.replace(/\r/g, '').trim().split('\n');
+  const headers = parseCSVRow(lineas[0]);
+  const datos = {};
+  for (let i = 1; i < lineas.length; i++) {
+    if (!lineas[i].trim()) continue;
+    const cols = parseCSVRow(lineas[i]);
+    const row = {};
+    headers.forEach((h, idx) => row[h] = cols[idx] || '');
+    const ru = (row['REGISTRO UNIVERSITARIO'] || row['RU'] || '').trim();
+    if (!ru) continue;
+    const clases = Array.from({length: 11}, (_, j) => parseClase(row['Clase ' + (j + 1)]));
+    const p1 = row['P1'] || null;
+    const p2 = row['P2'] || null;
+    const p3 = row['P3'] || null;
+    datos[ru] = {
+      nombres: row['NOMBRES'], apPat: row['APELLIDO PATERNO'], apMat: row['APELLIDO MATERNO'],
+      clases, notaAsist: calcNotaAsist(clases),
+      p1, p2, p3, notaPractica: calcNotaPractica(p1, p2, p3)
+    };
+  }
+  return datos;
+}
+
+const PROXY_URL = 'https://api.allorigins.win/raw?url=';
+
+async function fetchCSV() {
+  try {
+    const res = await fetch(CSV_URL);
+    if (!res.ok) throw new Error('HTTP ' + res.status);
+    return await res.text();
+  } catch (_) {
+    const res2 = await fetch(PROXY_URL + encodeURIComponent(CSV_URL));
+    if (!res2.ok) throw new Error('HTTP ' + res2.status);
+    return await res2.text();
+  }
+}
+
+async function init() {
+  const estadoCarga = document.getElementById('estado-carga');
+  const formBuscar  = document.getElementById('form-buscar');
+  const errDiv      = document.getElementById('error');
+  try {
+    DATOS = parsearCSV(await fetchCSV());
+    estadoCarga.style.display = 'none';
+    formBuscar.style.display  = 'block';
+    document.getElementById('ru').focus();
+  } catch (e) {
+    estadoCarga.style.display = 'none';
+    errDiv.textContent = 'No se pudo cargar los datos. Verifica tu conexión e intenta recargar la página.';
+    errDiv.style.display = 'block';
+  }
+}
+
+document.addEventListener('DOMContentLoaded', init);
 
 function colorNota(v, max100) {
   const n = parseFloat(v);
@@ -225,3 +318,4 @@ function volver() {
 }
 </script>
 </body>
+</html>
